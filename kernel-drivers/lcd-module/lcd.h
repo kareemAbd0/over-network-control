@@ -28,6 +28,7 @@ ssize_t LCD_init(struct lcd_drv_data * lcdDrvData);
 ssize_t LCD_send_command(unsigned char u8_command,struct lcd_drv_data * lcdDrvData );
 ssize_t LCD_display_char(const char data, struct lcd_drv_data *lcdDrvData);
 ssize_t LCD_display_string(const char *string, struct lcd_drv_data * lcdDrvData);
+ssize_t LCD_set_cursor(unsigned char row, unsigned char col, struct lcd_drv_data * lcdDrvData);
 ssize_t LCD_latch_data(unsigned char u8_data ,struct lcd_drv_data * lcdDrvData);
 
 ssize_t tester (struct lcd_drv_data *lcdDrvData);

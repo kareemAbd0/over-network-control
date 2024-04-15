@@ -50,12 +50,12 @@ ssize_t lcdscroll_store(struct device *dev, struct device_attribute *attr, const
 
     struct lcd_drv_data *drv_data = dev_get_drvdata(dev);
 
-    if (sysfs_streq(buf,"on")){
+    if (sysfs_streq(buf,"left")){
     if (LCD_send_command(0x18,drv_data) < 0){
             pr_err("LCD scroll failed\n");
             return -ENODEV;
         }
-    } else if (sysfs_streq(buf,"off")){
+    } else if (sysfs_streq(buf,"right")){
         if (LCD_send_command(0x1C,drv_data) < 0){
             pr_err("LCD scroll failed\n");
             return -ENODEV;
@@ -75,35 +75,42 @@ ssize_t lcdscroll_store(struct device *dev, struct device_attribute *attr, const
 ssize_t lcdpxy_show(struct device *dev, struct device_attribute *attr, char *buf){
 
     struct lcd_dev_data *dev_data = dev_get_drvdata(dev);
-    return sprintf(buf, "x: %d\n  y: %d  ", dev_data->x, dev_data->y);
+    return sprintf(buf, "x: %d\n  y: %d  ", dev_data->col, dev_data->row);
 }
 
 
 ssize_t lcdpxy_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count){
 
 
-    /*temp testing */
+
 
     int ret = 0;
+    long in;
     struct lcd_drv_data *drv_data = dev_get_drvdata(dev);
 
-    /*get the driver data*/
-    pr_info("debugging here LCD xy 1");
-
-
-
-    pr_info("debugging here LCD xy 2");
-
-    /*temp gpio test */
+    /*temp gpio test remove later */
 
     if(sysfs_streq(buf, "0")) {
         tester(drv_data);
     } else{
        ret = -EINVAL;
     }
+    /*convert and store the x and y coordinates*/
 
-    pr_info("debugging here LCD xy 3");
-    return ret? ret : count;
+
+
+   ret = kstrtol(buf,0,&in);
+    if (ret){
+        pr_err("wrong coordinates\n");
+        return -EINVAL;
+    }
+    drv_data->lcd_dev_data->row = in/10;
+    drv_data->lcd_dev_data->col = in%10;
+
+    /*set the cursor position*/
+    LCD_set_cursor(drv_data->lcd_dev_data->row,drv_data->lcd_dev_data->col,drv_data);
+
+    return count;
 }
 
 
@@ -119,18 +126,30 @@ ssize_t lcdtxt_store(struct device *dev, struct device_attribute *attr, const ch
 
     struct lcd_drv_data *drv_data = dev_get_drvdata(dev);
 
-    unsigned char u8_data = *buf;
+    /*check if drv_data is null*/
+    if (drv_data == NULL || drv_data->lcd_dev_data == NULL){
+        pr_err("null data\n");
+        return -ENODEV;
+    }
+
     /*set the text*/
     strcpy(drv_data->lcd_dev_data->text,buf);
+
     /*display the text*/
+
+    /*debug*/
+    pr_info("text: %s\n", drv_data->lcd_dev_data->text);
 
     if  ((LCD_display_string(buf,drv_data) < 0)){
         pr_err("LCD text failed\n");
         return -ENODEV;
     }
 
-    return 0;
+    return count;
 }
+
+
+
 
 
 
@@ -251,6 +270,13 @@ int lcd_probe(struct platform_device *pdev){
 
 
         i++;
+    }
+    /*allocate memory for the lcd device data*/
+    lcd_drv_data.lcd_dev_data = devm_kzalloc(dev, sizeof(struct lcd_dev_data), GFP_KERNEL);
+    /*check if memory allocation was successful*/
+    if (!lcd_drv_data.lcd_dev_data){
+        pr_err("memory allocation failed\n");
+        return -ENOMEM;
     }
 
     /* Create lcd device under /sys/class/bone-gpio and bind everything together */

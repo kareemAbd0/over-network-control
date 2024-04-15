@@ -14,7 +14,20 @@ ssize_t LCD_init(struct lcd_drv_data *lcdDrvData) {
 
 
 
+    /*set the pins to output*/
+
+    gpiod_direction_output(lcdDrvData->gpio_devices[EN_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[RS_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[RW_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D0_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D1_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D2_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D3_PIN]->desc,0);
+
+
+
     msleep(100);
+
     /*set to 4 bit mode*/
     LCD_send_command(0x28,lcdDrvData);
     msleep(1);
@@ -26,6 +39,8 @@ ssize_t LCD_init(struct lcd_drv_data *lcdDrvData) {
     msleep(2);
     /*entry mode set*/
     LCD_send_command(0x06,lcdDrvData);
+    /*set cursor to home*/
+    LCD_send_command(0x02,lcdDrvData);
 
     return 0;
 
@@ -63,6 +78,11 @@ ssize_t LCD_display_string(const char *string, struct lcd_drv_data * lcdDrvData)
 
     int i = 0;
     while(string[i] != '\0'){
+
+        /*debugging*/
+        pr_info("%c ",string[i]);
+
+
         LCD_display_char(string[i], lcdDrvData);
         i++;
     }
@@ -72,16 +92,34 @@ ssize_t LCD_display_string(const char *string, struct lcd_drv_data * lcdDrvData)
 
 
 
+ssize_t LCD_set_cursor(unsigned char row, unsigned char col, struct lcd_drv_data * lcdDrvData) {
+
+    if (row == 0) {
+        LCD_send_command(0x80 + col, lcdDrvData);
+
+
+    }
+    return 0;
+}
+
+
+
 
 ssize_t LCD_latch_data(unsigned char u8_data , struct lcd_drv_data * lcdDrvData){
 
     gpiod_set_value( lcdDrvData->gpio_devices[RW_PIN]->desc,LOW);
+    pr_info("this should be rw, real is %s",lcdDrvData->gpio_devices[RW_PIN]->label);
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,LOW);
 
+    pr_info("this should be EN, real is %s",lcdDrvData->gpio_devices[EN_PIN]->label);
     gpiod_set_value( lcdDrvData->gpio_devices[D0_PIN]->desc, (u8_data >> 0) & 0x01);
+    pr_info("this should be D0, real is %s",lcdDrvData->gpio_devices[D0_PIN]->label);
     gpiod_set_value( lcdDrvData->gpio_devices[D1_PIN]->desc, (u8_data >> 1) & 0x01);
+    pr_info("this should be D1, real is %s",lcdDrvData->gpio_devices[D1_PIN]->label);
     gpiod_set_value( lcdDrvData->gpio_devices[D2_PIN]->desc, (u8_data >> 2) & 0x01);
+    pr_info("this should be D2, real is %s",lcdDrvData->gpio_devices[D2_PIN]->label);
     gpiod_set_value( lcdDrvData->gpio_devices[D3_PIN]->desc, (u8_data >> 3) & 0x01);
+    pr_info("this should be D3, real is %s",lcdDrvData->gpio_devices[D3_PIN]->label);
 
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,HIGH);
     msleep(10);

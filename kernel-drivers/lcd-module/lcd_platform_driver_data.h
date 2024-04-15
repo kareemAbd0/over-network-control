@@ -19,8 +19,8 @@ struct lcd_gpio_dev_data{
 struct lcd_dev_data {
 
     char text[30];
-    int x;
-    int y;
+    int row;
+    int col;
     long cmd;
 
 };

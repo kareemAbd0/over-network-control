@@ -6,7 +6,8 @@ lcd_module-objs += lcd_platform_driver.o  lcd.o
 SRC := $(shell pwd)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build/ M=$(SRC)
+	#make -C /lib/modules/$(shell uname -r)/build/ M=$(SRC)
+	make -C /lib/modules/5.15.154-1-MANJARO/build/ M=$(SRC)
 
 	mkdir -p build
 	mv *.ko build
@@ -19,12 +20,13 @@ all:
 
 
 modules_install:
-	make -C /lib/modules/$(shell uname -r)/build/ M=$(SRC) modules_install
+#make -C /lib/modules/$(shell uname -r)/build/ M=$(SRC) modules_install
 
+	make -C /lib/modules/5.15.154-1-MANJARO/build/ M=$(SRC) modules_install
 
 clean:
 
 
-	$(MAKE) -C /lib/modules/$(shell uname -r)/build/ M=$(SRC) clean
-
+	#$(MAKE) -C /lib/modules/$(shell uname -r)/build/ M=$(SRC) clean
+	$(MAKE) -C /lib/modules/5.15.154-1-MANJARO/build/ M=$(SRC) clean
 
