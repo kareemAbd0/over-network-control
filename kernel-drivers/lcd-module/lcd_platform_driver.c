@@ -88,16 +88,8 @@ ssize_t lcdpxy_store(struct device *dev, struct device_attribute *attr, const ch
     long in;
     struct lcd_drv_data *drv_data = dev_get_drvdata(dev);
 
-    /*temp gpio test remove later */
 
-    if(sysfs_streq(buf, "0")) {
-        tester(drv_data);
-    } else{
-       ret = -EINVAL;
-    }
     /*convert and store the x and y coordinates*/
-
-
 
    ret = kstrtol(buf,0,&in);
     if (ret){
@@ -106,6 +98,7 @@ ssize_t lcdpxy_store(struct device *dev, struct device_attribute *attr, const ch
     }
     drv_data->lcd_dev_data->row = in/10;
     drv_data->lcd_dev_data->col = in%10;
+
 
     /*set the cursor position*/
     LCD_set_cursor(drv_data->lcd_dev_data->row,drv_data->lcd_dev_data->col,drv_data);
@@ -140,7 +133,7 @@ ssize_t lcdtxt_store(struct device *dev, struct device_attribute *attr, const ch
     /*debug*/
     pr_info("text: %s\n", drv_data->lcd_dev_data->text);
 
-    if  ((LCD_display_string(buf,drv_data) < 0)){
+    if  ((LCD_display_string(lcd_drv_data.lcd_dev_data->text,drv_data) < 0)){
         pr_err("LCD text failed\n");
         return -ENODEV;
     }
@@ -344,6 +337,7 @@ int __init lcd_platform_driver_init(void){
 
 void __exit lcd_platform_driver_exit(void) {
 
+    LCD_final(&lcd_drv_data);
     platform_driver_unregister(&lcd_platform_driver);
     class_destroy(lcd_drv_data.class_gpio);
     pr_info("module unloaded\n");

@@ -19,10 +19,10 @@ ssize_t LCD_init(struct lcd_drv_data *lcdDrvData) {
     gpiod_direction_output(lcdDrvData->gpio_devices[EN_PIN]->desc,0);
     gpiod_direction_output(lcdDrvData->gpio_devices[RS_PIN]->desc,0);
     gpiod_direction_output(lcdDrvData->gpio_devices[RW_PIN]->desc,0);
-    gpiod_direction_output(lcdDrvData->gpio_devices[D0_PIN]->desc,0);
-    gpiod_direction_output(lcdDrvData->gpio_devices[D1_PIN]->desc,0);
-    gpiod_direction_output(lcdDrvData->gpio_devices[D2_PIN]->desc,0);
-    gpiod_direction_output(lcdDrvData->gpio_devices[D3_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D4_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D5_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D6_PIN]->desc,0);
+    gpiod_direction_output(lcdDrvData->gpio_devices[D7_PIN]->desc,0);
 
 
 
@@ -39,8 +39,10 @@ ssize_t LCD_init(struct lcd_drv_data *lcdDrvData) {
     msleep(2);
     /*entry mode set*/
     LCD_send_command(0x06,lcdDrvData);
+    msleep(1);
     /*set cursor to home*/
     LCD_send_command(0x02,lcdDrvData);
+    msleep(1);
 
     return 0;
 
@@ -94,10 +96,12 @@ ssize_t LCD_display_string(const char *string, struct lcd_drv_data * lcdDrvData)
 
 ssize_t LCD_set_cursor(unsigned char row, unsigned char col, struct lcd_drv_data * lcdDrvData) {
 
-    if (row == 0) {
+    if (row == 1 ){
         LCD_send_command(0x80 + col, lcdDrvData);
-
-
+    }else if(row == 2){
+        LCD_send_command(0xC0 + col, lcdDrvData);
+    }else{
+        return -1;
     }
     return 0;
 }
@@ -108,18 +112,13 @@ ssize_t LCD_set_cursor(unsigned char row, unsigned char col, struct lcd_drv_data
 ssize_t LCD_latch_data(unsigned char u8_data , struct lcd_drv_data * lcdDrvData){
 
     gpiod_set_value( lcdDrvData->gpio_devices[RW_PIN]->desc,LOW);
-    pr_info("this should be rw, real is %s",lcdDrvData->gpio_devices[RW_PIN]->label);
+
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,LOW);
 
-    pr_info("this should be EN, real is %s",lcdDrvData->gpio_devices[EN_PIN]->label);
-    gpiod_set_value( lcdDrvData->gpio_devices[D0_PIN]->desc, (u8_data >> 0) & 0x01);
-    pr_info("this should be D0, real is %s",lcdDrvData->gpio_devices[D0_PIN]->label);
-    gpiod_set_value( lcdDrvData->gpio_devices[D1_PIN]->desc, (u8_data >> 1) & 0x01);
-    pr_info("this should be D1, real is %s",lcdDrvData->gpio_devices[D1_PIN]->label);
-    gpiod_set_value( lcdDrvData->gpio_devices[D2_PIN]->desc, (u8_data >> 2) & 0x01);
-    pr_info("this should be D2, real is %s",lcdDrvData->gpio_devices[D2_PIN]->label);
-    gpiod_set_value( lcdDrvData->gpio_devices[D3_PIN]->desc, (u8_data >> 3) & 0x01);
-    pr_info("this should be D3, real is %s",lcdDrvData->gpio_devices[D3_PIN]->label);
+    gpiod_set_value( lcdDrvData->gpio_devices[D4_PIN]->desc, (u8_data >> 0) & 0x01);
+    gpiod_set_value( lcdDrvData->gpio_devices[D5_PIN]->desc, (u8_data >> 1) & 0x01);
+    gpiod_set_value( lcdDrvData->gpio_devices[D6_PIN]->desc, (u8_data >> 2) & 0x01);
+    gpiod_set_value( lcdDrvData->gpio_devices[D7_PIN]->desc, (u8_data >> 3) & 0x01);
 
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,HIGH);
     msleep(10);
@@ -128,25 +127,21 @@ ssize_t LCD_latch_data(unsigned char u8_data , struct lcd_drv_data * lcdDrvData)
     return 0;
 }
 
-/*remove this function later*/
-ssize_t tester (struct lcd_drv_data *lcdDrvData){
 
-    /*blink EN pin*/
 
-    pr_info("debugging here LCD t 3");
-    gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,HIGH);
-    pr_info("debugging here LCD t 2");
-    msleep(3000);
+ssize_t LCD_final(struct lcd_drv_data * lcdDrvData){
+    gpiod_set_value( lcdDrvData->gpio_devices[RW_PIN]->desc,LOW);
+
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,LOW);
-    pr_info("debugging here LCD t 4");
 
-    /*blink RS pin*/
-    gpiod_set_value( lcdDrvData->gpio_devices[RS_PIN]->desc,HIGH);
-    msleep(3000);
-    gpiod_set_value( lcdDrvData->gpio_devices[RS_PIN]->desc,LOW);
-
+    gpiod_set_value( lcdDrvData->gpio_devices[D4_PIN]->desc,LOW);
+    gpiod_set_value( lcdDrvData->gpio_devices[D5_PIN]->desc,LOW);
+    gpiod_set_value( lcdDrvData->gpio_devices[D6_PIN]->desc,LOW);
+    gpiod_set_value( lcdDrvData->gpio_devices[D7_PIN]->desc,LOW);
 
     return 0;
 }
+
+
 
 
