@@ -1,0 +1,92 @@
+
+
+
+/ {
+
+ 	lcd {
+
+    		compatible = "org,lcd";
+		
+
+
+		gpio0: gpio0 {
+      			rpi-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
+     			label = "EN";
+    			};
+
+		gpio1: gpio1 {
+      			rpi-gpios = <&gpio 27 GPIO_ACTIVE_HIGH>;
+     			label = "RS";
+    			};
+
+		gpio2: gpio2 {
+      			rpi-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
+     			label = "RW";
+    			};
+
+		gpio3: gpio3 {
+      			rpi-gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
+     			label = "D4";
+    			};
+
+		gpio4: gpio4 {
+      			rpi-gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
+     			label = "D5";
+    			};
+
+		gpio5: gpio5 {
+      			rpi-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
+     			label = "D6";
+    			};
+
+		gpio6: gpio6 {
+      			rpi-gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
+     			label = "D7";
+    			};
+
+
+
+
+	};
+
+
+
+	led{
+
+		compatible = "org,led";
+
+		gpio7: gpio7 {
+      			rpi-gpio = <&gpio 6 GPIO_ACTIVE_HIGH>;
+     			label = "led1";
+    			};
+
+		gpio8: gpio8 {
+      			rpi-gpio = <&gpio 13 GPIO_ACTIVE_HIGH>;
+     			label = "led2";
+    			};
+		gpio9: gpio9 {
+      			rpi-gpio = <&gpio 19 GPIO_ACTIVE_HIGH>;
+     			label = "led3";
+    			};
+		gpio10: gpio10 {
+      			rpi-gpio = <&gpio 26 GPIO_ACTIVE_HIGH>;
+     			label = "led4";
+    			};
+
+		gpio11: gpio11 {
+      			rpi-gpio = <&gpio 12 GPIO_ACTIVE_HIGH>;
+     			label = "led5";
+    			};
+
+		
+
+
+
+		
+
+	   };
+
+
+
+
+};
