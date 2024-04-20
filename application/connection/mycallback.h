@@ -11,7 +11,7 @@ class mycallback: public virtual mqtt::callback{
 
     public:
 
-    std::string latest_message;
+    std::string latest_message = "0";
 
     private:
 

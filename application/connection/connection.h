@@ -94,7 +94,7 @@ public:
 
     /**
      */
-    void get_new_message();
+    std::string get_new_message();
 
 private:
 

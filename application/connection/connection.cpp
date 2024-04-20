@@ -100,8 +100,8 @@ CONNECTION_STATUS Client::disconnect() {
 }
 
 
-void Client::get_new_message() {
-    std::cout << this->cb.latest_message << std::endl;
+std::string Client::get_new_message() {
+     return this->cb.latest_message;
 }
 
 
