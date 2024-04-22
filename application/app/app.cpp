@@ -54,8 +54,9 @@ void App::run(){
             continue;
         }
 
-        lcd1.display_text(message);
-        lcd1.display_text(message);
+        lcd1.clear_display();
+        lcd1.send_command("0x01");
+        lcd1.display_text("AC temp: " + message + "C");
 
         int message_num = std::stoi(message);
 
