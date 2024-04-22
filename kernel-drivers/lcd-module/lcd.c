@@ -26,23 +26,24 @@ ssize_t LCD_init(struct lcd_drv_data *lcdDrvData) {
 
 
 
-    usleep_range(15000, 16000);
+    mdelay(25);
+
+
 
     /*set to 4 bit mode*/
+    LCD_send_command(0x02,lcdDrvData);
+    mdelay(25);
     LCD_send_command(0x28,lcdDrvData);
-    usleep_range(15000,16000);
-    /*display on cursor off*/
+    mdelay(25);
+    /*display on cursor blinking*/
     LCD_send_command(0x0f,lcdDrvData);
-    usleep_range(15000,16000);
-    /*clear display*/
-    LCD_send_command(0x01,lcdDrvData);
-    usleep_range(25000,30000);
+    mdelay(25);
     /*entry mode set*/
     LCD_send_command(0x06,lcdDrvData);
-    usleep_range(15000,16000);
-    /*set cursor to home*/
-    LCD_send_command(0x02,lcdDrvData);
-    usleep_range(15000,16000);
+    mdelay(25);
+    /*clear display*/
+    LCD_send_command(0x01,lcdDrvData);
+
 
     return 0;
 
@@ -120,7 +121,7 @@ ssize_t LCD_latch_data(unsigned char u8_data , struct lcd_drv_data * lcdDrvData)
     gpiod_set_value( lcdDrvData->gpio_devices[D7_PIN]->desc, (u8_data >> 3) & 0x01);
 
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,HIGH);
-    usleep_range(50,100);
+    mdelay(10);
     gpiod_set_value( lcdDrvData->gpio_devices[EN_PIN]->desc,LOW);
 
     return 0;
