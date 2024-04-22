@@ -37,25 +37,28 @@ void App::init(){
     led3.init();
     led4.init();
     led5.init();
+
 }
 
 
 void App::run(){
 
     std::string old_message = " ";
+
     while(true) {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         std::string message = client.get_new_message();
-
         std::cout << "Message: " << message << std::endl;
         if (message == old_message) {
             continue;
         }
 
-        lcd1.display_text(message);
-        lcd1.display_text(message);
+
+
+        lcd1.clear_display();
+        lcd1.display_text("thermostat temp: " + message + "C");
 
         int message_num = std::stoi(message);
 

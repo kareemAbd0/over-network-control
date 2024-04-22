@@ -1,4 +1,8 @@
 // Led.h
+
+#ifndef APPLICATION_LED_H
+#define APPLICATION_LED_H
+
 #include "../err.h"
 #include <string>
 #include <fstream>
@@ -19,3 +23,5 @@ public:
     ERR_STATUS turn_on();
     ERR_STATUS turn_off();
 };
+
+#endif //APPLICATION_LED_H

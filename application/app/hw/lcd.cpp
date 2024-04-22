@@ -4,14 +4,14 @@
 
 #include "lcd.h"
 
-const std::string PATH2 = "/sys/class/lcd_16x2/lcd";
-//std::string PATH2 = "/mock/lcd16x2/lcd";
+//std::string PATH2 = "mock/lcd16x2/lcd";
+std::string PATH2 = "/sys/class/lcd_16x2/lcd";
 Lcd::Lcd(int num)  : lcd_num(num) {};
 
 
 ERR_STATUS Lcd::display_text(const std::string& message) {
     ERR_STATUS err = GOOD;
-    std::string path = PATH2 + "/lcdtxt";
+    std::string path = PATH2 +  "/lcdtxt";
     std::ofstream file(path);
     if (file.is_open()) {
         file << message;
@@ -22,7 +22,7 @@ ERR_STATUS Lcd::display_text(const std::string& message) {
     return err;
 }
 
-ERR_STATUS Lcd::change_postion(const std::string& message) {
+ERR_STATUS Lcd::change_position(const std::string& message) {
 
     ERR_STATUS err = GOOD;
 

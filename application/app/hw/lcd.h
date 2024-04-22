@@ -10,6 +10,7 @@
 #include "../err.h"
 
 
+// static const std::string PATH = "/sys/class/lcd16x2/lcd ";
 
 class Lcd {
 
@@ -20,7 +21,7 @@ public:
 
     //init is done in the kernel module
     ERR_STATUS display_text(const std::string& message);
-    ERR_STATUS change_postion(const std::string& message);
+    ERR_STATUS change_position(const std::string& message);
     ERR_STATUS send_command(const std::string& message);
     ERR_STATUS clear_display();
 
