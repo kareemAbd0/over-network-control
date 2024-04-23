@@ -27,6 +27,8 @@ public:
     static App& get_instance();
     void init();
     void run();
+    void temp_run(const std::string& message);
+    void garage_run(const std::string& message);
 };
 
 
