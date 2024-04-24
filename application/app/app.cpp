@@ -28,11 +28,22 @@ void App::init(){
     }
 
 
-    client.subscribe("tmp6570-control");
+   if( client.subscribe("tmp6570-control") == CONNECTION_STATUS::FAILURE) {
+       std::cout << "Failed to subscribe" << std::endl;
+       exit(1);
+   }
+
+   if (client.subscribe("garage5328-control") == CONNECTION_STATUS::FAILURE) {
+       std::cout << "Failed to subscribe" << std::endl;
+       exit(1);
+   }
+
     if (led1.init() == NO_FILE) {
         std::cout << "Failed to initialize led1" << std::endl;
         exit(1);
     }
+
+
     led2.init();
     led3.init();
     led4.init();
@@ -45,7 +56,7 @@ void App::run(){
     std::string old_message = " ";
     while(true) {
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
         std::string message = client.get_new_message();
 
@@ -56,7 +67,7 @@ void App::run(){
 
         if (isdigit(message[0])) {
             temp_run(message);
-        } else if (message[0] == 'o') {
+        } else if (message == "open" || message == "closed") {
             garage_run(message);
         } else std::cout << "Invalid message" << std::endl;
 
@@ -70,7 +81,6 @@ void App::run(){
 
 void App::temp_run(const std::string& message) {
     lcd1.clear_display();
-    lcd1.send_command("0x01");
     lcd1.display_text("AC temp: " + message + "C");
 
     int message_num = std::stoi(message);
@@ -106,8 +116,8 @@ void App::temp_run(const std::string& message) {
 
 void App::garage_run(const std::string& message) {
     lcd1.clear_display();
-    lcd1.send_command("0x01");
-    lcd1.display_text("Garage: "+ message);
+
+    lcd1.display_text("door moving...");
 
     led1.turn_off();
     led2.turn_off();
@@ -115,7 +125,7 @@ void App::garage_run(const std::string& message) {
     led4.turn_off();
     led5.turn_off();
 
-    if (message == "on"){
+    if (message == "open"){
         //blink led5 for 3 seconds
         for (int i = 0; i < 6; i++) {
             led5.turn_on();
@@ -125,7 +135,7 @@ void App::garage_run(const std::string& message) {
         }
         led1.turn_on();
     }
-    else if (message == "off"){
+    else if (message == "closed"){
         //blink led1 for 3 seconds
         for (int i = 0; i < 6; i++) {
             led1.turn_on();
@@ -138,5 +148,7 @@ void App::garage_run(const std::string& message) {
     else {
         std::cout << "Invalid message" << std::endl;
     }
+    lcd1.clear_display();
+    lcd1.display_text("Garage: "+ message);
 }
 
