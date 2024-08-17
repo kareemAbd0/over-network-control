@@ -1,13 +1,13 @@
-//
 // Created by kareem on 4/13/24.
+//
 //
 
 
 #include "connection.h"
 
-
 Client::Client(const std::string &address, const std::string &client_id) : cli(address, client_id),
-    QOS(1),
+
+                                                                           QOS(1),
     connOpts(mqtt::connect_options_builder().clean_session().will(mqtt::message("will", "client disconnected", 1, true)).keep_alive_interval(std::chrono::seconds(60)).finalize()){
     cli.set_callback(cb);
 
